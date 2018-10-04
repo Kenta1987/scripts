@@ -1,0 +1,47 @@
+; 変数定義
+HOSTNAME = param2
+HOSTADDR = param3
+PASSWORD = param4
+VLANDATDIR = param5
+TFTPSERVER = 'SERVER_ADDR'
+
+; 実行準備
+COMMAND = HOSTADDR
+strconcat COMMAND ':23 /nossh /T=1'
+
+COPYVLANDAT = 'copy '
+strconcat COPYVLANDAT VLANDATDIR
+strconcat COPYVLANDAT ' tftp:'
+
+DATNAME = HOSTNAME
+strconcat DATNAME '_vlan.dat'
+
+; Ciscoモード定義
+USERMODE = HOSTNAME
+strconcat USERMODE '>'
+EXECMODE = HOSTNAME
+strconcat EXECMODE '#'
+
+; 処理実行
+connect COMMAND
+wait 'Password:'
+sendln PASSWORD
+wait USERMODE
+sendln 'enable'
+wait 'Password:'
+sendln PASSWORD
+wait EXECMODE
+
+sendln 'terminal length 0'
+wait EXECMODE
+
+sendln COPYVLANDAT
+wait 'Address or name of remote host []?'
+
+sendln TFTPSERVER
+wait 'Destination filename [vlan.dat]?'
+
+sendln DATNAME
+wait EXECMODE
+
+sendln 'exit'

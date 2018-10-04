@@ -1,0 +1,57 @@
+; 変数定義
+HOSTNAME = param2
+HOSTADDR = param3
+PASSWORD = param4
+LOGFILEPATH = 'C:\backup\'
+
+; 実行準備
+COMMAND = HOSTADDR
+strconcat COMMAND ':23 /nossh /T=1'
+
+; ログファイル定義
+LOGFILE = LOGFILEPATH
+strconcat LOGFILE HOSTNAME
+strconcat LOGFILE '_config.txt'
+
+; Ciscoモード定義
+USERMODE = HOSTNAME
+strconcat USERMODE '>'
+EXECMODE = HOSTNAME
+strconcat EXECMODE '#'
+
+; 処理実行
+connect COMMAND
+wait 'Password:'
+sendln PASSWORD
+wait USERMODE
+sendln 'enable'
+wait 'Password:'
+sendln PASSWORD
+wait EXECMODE
+sendln 'terminal length 0'
+logopen LOGFILE 0 0
+wait EXECMODE
+
+sendln 'show tech-support'
+wait EXECMODE
+sendln 'show running-config'
+wait EXECMODE
+sendln 'show startup-config'
+wait EXECMODE
+sendln 'show logging'
+wait EXECMODE
+sendln 'show version'
+wait EXECMODE
+sendln 'show vlan'
+wait EXECMODE
+sendln 'show interfaces status'
+wait EXECMODE
+sendln 'show spanning-tree'
+wait EXECMODE
+sendln 'show cdp neighbors'
+wait EXECMODE
+sendln 'show vtp status'
+wait EXECMODE
+
+logclose
+sendln 'exit'
